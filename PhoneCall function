@@ -1,0 +1,167 @@
+#include <string>
+#include <iostream>
+#include <fstream>
+#ifndef PHONECALL_H
+#define PHONECALL_H
+
+
+using namespace std;
+
+class PhoneCall
+{
+    public:
+        PhoneCall(); //default constructor
+        PhoneCall(string number); //overloaded constructor
+        ~PhoneCall();  //destructor
+        //getters
+        string get_Number() const;
+        int get_Length() const;
+        float get_Rate() const;
+       /* //setters
+        void set_Number(string theNumber);
+        void set_Length(int theLength);
+        void set_Rate(float theRate);*/
+        //float function to calculates price
+        float calcCharge();
+        //overloaded operators
+        friend bool operator==(const PhoneCall& call1, const PhoneCall& call2);
+        friend istream& operator >>(istream& ins, PhoneCall& pCall);
+        friend ostream& operator <<(ostream& outs, PhoneCall& pCall);
+    //member variables
+    private:
+        string number;
+        int length;
+        float rate;
+};
+
+#endif //PHONECALL_H
+
+#include "Phonecall.h"
+#include <iostream>
+#include <fstream>
+#include <cctype>
+#include <cstdlib>
+
+using namespace std;
+
+//default constructro
+PhoneCall::PhoneCall()
+{
+    number = " ";
+    length = 0;
+    rate = 0.0;
+}
+//overloaded construnctor
+PhoneCall::PhoneCall(string theNumber)
+{
+    number = theNumber;
+    length = 0;
+    rate = 0;
+}
+//destructor
+PhoneCall::~PhoneCall()
+{
+
+}
+//getters
+string PhoneCall::get_Number() const
+{
+    return number;
+}
+int PhoneCall::get_Length() const
+{
+    return length;
+}
+float PhoneCall::get_Rate() const
+{
+    return rate;
+}
+/*
+//setters
+void PhoneCall::set_Number(string theNumber)
+{
+    number = theNumber;
+}
+void PhoneCall::set_Length(int theLength)
+{
+    length = theLength;
+}
+void PhoneCall::set_Rate(float theRate)
+{
+    rate = theRate;
+}
+*/
+//calculate
+float PhoneCall::calcCharge()
+{
+    length * rate;
+}
+//overloaded operators
+bool operator ==(const PhoneCall& call1, const PhoneCall& call2)
+{
+    if(call1.number == call2.number)
+        return true;
+        else
+        return false;
+}
+istream& operator>>(istream& ins, PhoneCall &pCall){
+    ins >> pCall.number >> pCall.length >> pCall.rate;
+    return ins;
+}
+ostream& operator <<(ostream& outs, PhoneCall& pCall)
+{
+    outs << pCall.number;
+    outs << pCall.length;
+    outs << pCall.rate;
+    return outs;
+}
+
+
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+#include <cctype>
+#include "PhoneCall.h"
+using namespace std;
+
+int main()
+{
+
+    string phoneNumber;
+    ifstream in_stream;
+
+    cout << "Please enter a phone number to find out the cost: " << endl;
+    cin >> phoneNumber;
+    PhoneCall theCall(phoneNumber);
+    in_stream.open("MyCalls.dat");
+    if(in_stream.fail())
+    {
+        cout << "Input file failed to open" << endl;
+        exit(1);
+    }
+
+    PhoneCall filePhoneNum;
+
+    float totalAmount = 0;
+    float longCall = 0;
+    int numOfCalls = 0;
+
+
+    while(in_stream >> phoneNumber)
+    {
+        if(theCall == filePhoneNum)
+            {
+                totalAmount = totalAmount + filePhoneNum.calcCharge();
+                numOfCalls = ++numOfCalls;
+                if(theCall.get_Length() > longCall)
+                    longCall = theCall.get_Length();
+            }
+    }
+
+    cout << "The longest call made was: " << longCall << endl;
+    cout << "the total amount spend on the call was: " << totalAmount << endl;
+    cout << "The number of calls made from this number is: " << numOfCalls << endl;
+
+    in_stream.close();
+    return 0;
+}
